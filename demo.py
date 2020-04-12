@@ -26,6 +26,9 @@ from lib.utils.logging import setup_logging
 from skimage.transform import resize
 from lib.utils.iuvmap import iuv_map2img
 
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"] = "5"
+
 # Set up logging and load config options
 logger = setup_logging(__name__)
 
