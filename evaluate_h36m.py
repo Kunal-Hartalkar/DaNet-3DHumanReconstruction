@@ -33,7 +33,7 @@ from lib.utils.iuvmap import iuv_map2img
 from datasets.h36m_eval_dataset import H36MEvalDataset
 from cam_utils import orthographic_project_torch, undo_keypoint_normalisation, \
     rotate_translate_verts_torch
-from eval_utils import scale_and_translation_transform_batch, compute_similarity_transform_batch,
+from eval_utils import scale_and_translation_transform_batch, compute_similarity_transform_batch
 
 # Set up logging and load config options
 logger = setup_logging(__name__)
