@@ -61,7 +61,7 @@ def parse_args():
 
     parser.add_argument('--protocol', default=2, type=int)
     parser.add_argument('--gpu', type=str)
-    parser.add_argument('--img_wh', default=256, type=int)
+    parser.add_argument('--img_wh', default=224, type=int)
 
     return parser.parse_args()
 
