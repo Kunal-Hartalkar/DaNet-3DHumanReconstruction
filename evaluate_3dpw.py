@@ -171,7 +171,8 @@ def evaluate_single_in_multitasknet_3dpw(model,
             target_reposed_smpl_output = smpl_female(betas=target_shape)
             target_reposed_vertices = target_reposed_smpl_output.vertices
             target_joints_h36m = torch.matmul(J_regressor_batch, target_vertices)
-            target_joints_h36mlsp = target_joints_h36m[:, H36M_TO_J14, :]
+            target_pelvis = target_joints_h36m[:, [0], :].clone()
+            target_joints_h36mlsp = target_joints_h36m[:, H36M_TO_J14, :] - target_pelvis
 
         # ------------------------------- PREDICTIONS -------------------------------
         pred_results = model.infer_net(input)  # dict with keys 'visualisation' and 'para'

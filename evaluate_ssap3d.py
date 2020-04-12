@@ -110,13 +110,12 @@ def evaluate_single_in_multitasknet_ssap3d(model,
         pvet_scale_corrected_sum = 0.0
         pvet_scale_corrected_per_frame = []
 
-    fname_per_frame = []
+    frame_path_per_frame = []
     pose_per_frame = []
     shape_per_frame = []
     cam_per_frame = []
     num_samples = 0
     num_vertices = 6890
-    num_joints3d = 14
 
     model.eval()
     for batch_num, samples_batch in enumerate(tqdm(eval_dataloader)):
@@ -202,9 +201,8 @@ def evaluate_single_in_multitasknet_ssap3d(model,
             pvet_scale_corrected_sum += np.sum(pvet_scale_corrected_batch)  # scalar
             pvet_scale_corrected_per_frame.append(np.mean(pvet_scale_corrected_batch, axis=-1))
 
-        num_samples += target_shape.shape[0]
-        fnames = samples_batch['fname']
-        fname_per_frame.append(fnames)
+        frame_path = samples_batch['frame_path']
+        frame_path_per_frame.append(frame_path)
         pose_per_frame.append(pred_rotmat)
         shape_per_frame.append(pred_betas)
         cam_per_frame.append(pred_camera)
@@ -260,13 +258,16 @@ def evaluate_single_in_multitasknet_ssap3d(model,
                 plt.gca().set_aspect('equal', adjustable='box')
 
                 # plt.show()
-                save_fig_path = os.path.join(save_path, fnames[0])
+                split_path = frame_path[0].split('/')
+                clip_name = split_path[-3]
+                frame_num = split_path[-1]
+                save_fig_path = os.path.join(save_path, clip_name + '_' + frame_num)
                 plt.savefig(save_fig_path, bbox_inches='tight')
                 plt.close()
 
     # ------------------------------- DISPLAY METRICS AND SAVE PER-FRAME METRICS -------------------------------
-    fname_per_frame = np.concatenate(fname_per_frame, axis=0)
-    np.save(os.path.join(save_path, 'fname_per_frame.npy'), fname_per_frame)
+    frame_path_per_frame = np.concatenate(frame_path_per_frame, axis=0)
+    np.save(os.path.join(save_path, 'fname_per_frame.npy'), frame_path_per_frame)
 
     pose_per_frame = np.concatenate(pose_per_frame, axis=0)
     np.save(os.path.join(save_path, 'pose_per_frame.npy'), pose_per_frame)
