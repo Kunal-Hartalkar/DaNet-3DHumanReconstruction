@@ -201,6 +201,7 @@ def evaluate_single_in_multitasknet_ssap3d(model,
             pvet_scale_corrected_sum += np.sum(pvet_scale_corrected_batch)  # scalar
             pvet_scale_corrected_per_frame.append(np.mean(pvet_scale_corrected_batch, axis=-1))
 
+        num_samples += target_shape.shape[0]
         frame_path = samples_batch['frame_path']
         frame_path_per_frame.append(frame_path)
         pose_per_frame.append(pred_rotmat)
