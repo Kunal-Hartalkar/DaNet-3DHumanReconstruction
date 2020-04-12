@@ -90,7 +90,7 @@ def evaluate_single_in_multitasknet_3dpw(model,
     smpl_female.to(device)
 
     J_regressor = torch.from_numpy(np.load(JOINT_REGRESSOR_H36M)).float()
-    J_regressor_batch = J_regressor[None, :].expand(batch_size, -1, -1).to(device)
+    J_regressor_batch = J_regressor[None, :].expand(1, -1, -1).to(device)
 
     if 'pve' in metrics:
         pve_sum = 0.0
