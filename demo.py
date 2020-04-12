@@ -99,10 +99,10 @@ def main():
         img_id = path.split('/')[-1][:-4]
 
         image_tensor = torchvision.transforms.ToTensor()(image).unsqueeze(0).cuda()
-
+        print('image', image_tensor.shape)
         # run inference
         pred_results = model.module.infer_net(image_tensor)
-
+        print('pred results', list(pred_results.keys()))
         para_pred = pred_results['para']
 
         cam_pred = para_pred[:, 0:3].contiguous()
@@ -112,6 +112,7 @@ def main():
         smpl_pts = model.module.iuv2smpl.smpl(beta_pred, Rs=Rs_pred, get_skin=True)
         kps3ds_pred = smpl_pts['cocoplus']
         vert_pred = smpl_pts['verts']
+        print('verts', vert_pred.shape)
 
         # input image
         image_np = image_tensor[0].cpu().numpy()
