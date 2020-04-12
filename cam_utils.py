@@ -1,4 +1,6 @@
 import torch
+import cv2
+import numpy as np
 
 
 def orthographic_project_torch(points3D, cam_params):
@@ -31,3 +33,23 @@ def undo_keypoint_normalisation(normalised_keypoints, img_wh):
     """
     keypoints = (normalised_keypoints + 1) * (img_wh/2.0)
     return keypoints
+
+
+def rotate_translate_verts_torch(vertices, axis, angle, trans):
+    """
+    Rotates and translates batch of vertices.
+    :param vertices: B, N, 3
+    :param axis: 3,
+    :param angle: angle in radians
+    :param trans: 3,
+    :return:
+    """
+    r = angle * axis
+    R = cv2.Rodrigues(r)[0]
+    R = torch.from_numpy(R.astype(np.float32)).to(vertices.device)
+    trans = torch.from_numpy(trans.astype(np.float32)).to(vertices.device)
+
+    vertices = torch.einsum('ij,bkj->bki', R, vertices)
+    vertices = vertices + trans
+
+    return vertices

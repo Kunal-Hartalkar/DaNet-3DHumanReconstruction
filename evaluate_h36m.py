@@ -31,8 +31,9 @@ from lib.utils.logging import setup_logging
 from skimage.transform import resize
 from lib.utils.iuvmap import iuv_map2img
 from datasets.h36m_eval_dataset import H36MEvalDataset
-from cam_utils import orthographic_project_torch, undo_keypoint_normalisation
-from eval_utils import scale_and_translation_transform_batch, compute_similarity_transform_batch
+from cam_utils import orthographic_project_torch, undo_keypoint_normalisation, \
+    rotate_translate_verts_torch
+from eval_utils import scale_and_translation_transform_batch, compute_similarity_transform_batch,
 
 # Set up logging and load config options
 logger = setup_logging(__name__)
@@ -88,6 +89,11 @@ def evaluate_single_in_multitasknet_h36m(model,
 
     J_regressor = torch.from_numpy(np.load(JOINT_REGRESSOR_H36M)).float()
     J_regressor_batch = J_regressor[None, :].expand(batch_size, -1, -1).to(device)
+
+    # To rotate vertices such that they are right way up when projected
+    axis = np.array([0, 1, 0])
+    angle = np.radians(90)
+    trans = np.array([0, 0, 0])
 
     if 'pve' in metrics:
         pve_sum = 0.0
@@ -167,6 +173,8 @@ def evaluate_single_in_multitasknet_h36m(model,
         pred_output = smpl_model(betas=pred_betas, body_pose=pred_rotmat[:, 1:],
                                  global_orient=pred_rotmat[:, 0].unsqueeze(1), pose2rot=False)
         pred_vertices = pred_output.vertices
+        # Need to rotate pred_vertices to make them right way up when projected
+        pred_vertices = rotate_translate_verts_torch(pred_vertices, axis, angle, trans)
         pred_vertices_projected2d = orthographic_project_torch(pred_vertices, pred_camera)
         pred_vertices_projected2d = undo_keypoint_normalisation(pred_vertices_projected2d,
                                                                 input.shape[-1])
