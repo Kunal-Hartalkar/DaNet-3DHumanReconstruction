@@ -97,9 +97,10 @@ def main():
 
         image = Image.open(path).convert('RGB')
         img_id = path.split('/')[-1][:-4]
+        print('image', image.shape)
 
         image_tensor = torchvision.transforms.ToTensor()(image).unsqueeze(0).cuda()
-        print('image', image_tensor.shape)
+        print('image tensor', image_tensor.shape)
         # run inference
         pred_results = model.module.infer_net(image_tensor)
         print('pred results', list(pred_results.keys()))
