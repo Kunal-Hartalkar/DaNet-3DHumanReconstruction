@@ -159,7 +159,7 @@ def evaluate_single_in_multitasknet_h36m(model,
         target_joints_h36mlsp = target_joints_h36m[:, H36M_TO_J14, :]
 
         # ------------------------------- PREDICTIONS -------------------------------
-        pred_results = model.module.infer_net(input)  # dict with keys 'visualisation' and 'para'
+        pred_results = model.infer_net(input)  # dict with keys 'visualisation' and 'para'
         para_pred = pred_results['para']
         pred_camera = para_pred[:, 0:3].contiguous()
         pred_betas = para_pred[:, 3:13].contiguous()
