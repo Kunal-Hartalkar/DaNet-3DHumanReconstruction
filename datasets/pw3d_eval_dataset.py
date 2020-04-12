@@ -1,12 +1,9 @@
-import cv2
 import numpy as np
 import os
-import pickle
+from PIL import Image
 import torch
 from torch.utils.data import Dataset
-from torchvision.transforms import Normalize
-
-import constants
+from torchvision.transforms import ToTensor
 
 
 class PW3DEvalDataset(Dataset):
@@ -25,8 +22,6 @@ class PW3DEvalDataset(Dataset):
 
         self.cropped_frames_dir = cropped_frames_dir
         self.img_wh = img_wh
-        self.normalize_img = Normalize(mean=constants.IMG_NORM_MEAN,
-                                       std=constants.IMG_NORM_STD)
 
     def __len__(self):
         return len(self.frame_fnames)
@@ -39,23 +34,22 @@ class PW3DEvalDataset(Dataset):
         fname = self.frame_fnames[index]
         frame_path = os.path.join(self.cropped_frames_dir, fname)
 
-        img = cv2.cvtColor(cv2.imread(frame_path), cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (self.img_wh, self.img_wh), interpolation=cv2.INTER_LINEAR)
-        img = np.transpose(img, [2, 0, 1])/255.0
+        img = Image.open(frame_path).convert(
+            'RGB')  # (W, H, 3) - but is PIL Image and not array
+        img = img.resize((self.img_wh, self.img_wh))
+        input = ToTensor()(img)  # (3, 224, 224)
+        vis_img = np.array(img).astype(np.uint8)
 
         # Targets
         pose = self.pose[index]
         shape = self.shape[index]
         gender = self.gender[index]
 
-        img = torch.from_numpy(img).float()
         pose = torch.from_numpy(pose).float()
         shape = torch.from_numpy(shape).float()
 
-        input = self.normalize_img(img)
-
         return {'input': input,
-                'vis_img': img,
+                'vis_img': vis_img,
                 'pose': pose,
                 'shape': shape,
                 'fname': fname,
