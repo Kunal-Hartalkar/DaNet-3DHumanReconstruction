@@ -104,10 +104,9 @@ def main():
         pred_results = model.module.infer_net(image_tensor)  # dict with keys 'visualisation' and 'para'
         para_pred = pred_results['para']
 
-        cam_pred = para_pred[:, 0:3].contiguous()
+        cam_pred = para_pred[:, 0:3].contiguous()  # [s, tx, ty]
         beta_pred = para_pred[:, 3:13].contiguous()
         Rs_pred = para_pred[:, 13:].contiguous().view(-1, 24, 3, 3)
-        print('cam', cam_pred)
 
         smpl_pts = model.module.iuv2smpl.smpl(beta_pred, Rs=Rs_pred, get_skin=True)
         kps3ds_pred = smpl_pts['cocoplus']

@@ -1,12 +1,10 @@
-import cv2
 import numpy as np
 import os
-import pickle
+from PIL import Image
 import torch
 from torch.utils.data import Dataset
-from torchvision.transforms import Normalize
+from torchvision.transforms import ToTensor
 
-import constants
 
 class H36MEvalDataset(Dataset):
     def __init__(self, h36m_dir_path, protocol, img_wh, use_subset=False):
@@ -34,8 +32,6 @@ class H36MEvalDataset(Dataset):
 
         self.cropped_frames_dir = cropped_frames_dir
         self.img_wh = img_wh
-        self.normalize_img = Normalize(mean=constants.IMG_NORM_MEAN, std=constants.IMG_NORM_STD)
-
 
     def __len__(self):
         return len(self.frame_fnames)
@@ -48,21 +44,17 @@ class H36MEvalDataset(Dataset):
         fname = self.frame_fnames[index]
         frame_path = os.path.join(self.cropped_frames_dir, fname)
 
-        img = cv2.cvtColor(cv2.imread(frame_path), cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (self.img_wh, self.img_wh), interpolation=cv2.INTER_LINEAR)
-        img = np.transpose(img, [2, 0, 1])/255.0
+        img = Image.open(frame_path).convert('RGB')  # (224, 224, 3) - but is PIL Image and not array
+        input = ToTensor()(img).unsqueeze(0)  # (1, 3, 224, 224)
 
         # Targets
         joints3d = self.joints3d[index]
         pose = self.pose[index]
         shape = self.shape[index]
 
-        img = torch.from_numpy(img).float()
         joints3d = torch.from_numpy(joints3d).float()
         pose = torch.from_numpy(pose).float()
         shape = torch.from_numpy(shape).float()
-
-        input = self.normalize_img(img)
 
         return {'input': input,
                 'vis_img': img,
