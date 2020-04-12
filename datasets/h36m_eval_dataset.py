@@ -46,6 +46,7 @@ class H36MEvalDataset(Dataset):
 
         img = Image.open(frame_path).convert('RGB')  # (224, 224, 3) - but is PIL Image and not array
         input = ToTensor()(img).unsqueeze(0)  # (1, 3, 224, 224)
+        vis_img = np.array(img).astype(np.uint8)
 
         # Targets
         joints3d = self.joints3d[index]
@@ -57,7 +58,7 @@ class H36MEvalDataset(Dataset):
         shape = torch.from_numpy(shape).float()
 
         return {'input': input,
-                'vis_img': img,
+                'vis_img': vis_img,
                 'target_j3d': joints3d,
                 'pose': pose,
                 'shape': shape,
