@@ -173,6 +173,7 @@ def evaluate_single_in_multitasknet_3dpw(model,
             target_joints_h36m = torch.matmul(J_regressor_batch, target_vertices)
             target_pelvis = target_joints_h36m[:, [0], :].clone()
             target_joints_h36mlsp = target_joints_h36m[:, H36M_TO_J14, :] - target_pelvis
+            print(target_pelvis)
 
         # ------------------------------- PREDICTIONS -------------------------------
         pred_results = model.infer_net(input)  # dict with keys 'visualisation' and 'para'
@@ -194,6 +195,7 @@ def evaluate_single_in_multitasknet_3dpw(model,
         pred_joints_h36m = torch.matmul(J_regressor_batch, pred_vertices)
         pred_pelvis = pred_joints_h36m[:, [0], :].clone()
         pred_joints_h36mlsp = pred_joints_h36m[:, H36M_TO_J14, :] - pred_pelvis
+        print(pred_pelvis)
 
         # Numpy-fying
         target_vertices = target_vertices.cpu().detach().numpy()
