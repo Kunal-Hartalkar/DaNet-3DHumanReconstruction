@@ -182,7 +182,7 @@ def evaluate_single_in_multitasknet_h36m(model,
         pred_vertices_projected2d = undo_keypoint_normalisation(pred_vertices_projected2d,
                                                                 input.shape[-1])
 
-        smpl_pts = model.module.iuv2smpl.smpl(pred_betas, Rs=pred_rotmat, get_skin=True)
+        smpl_pts = model.iuv2smpl.smpl(pred_betas, Rs=pred_rotmat, get_skin=True)
         vert_pred = smpl_pts['verts']  # (1, 6890, 3)
         vert_pred = vert_pred.cpu().detach().numpy()
 
