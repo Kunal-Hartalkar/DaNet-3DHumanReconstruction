@@ -286,7 +286,7 @@ def evaluate_single_in_multitasknet_h36m(model,
         # ------------------------------- VISUALISE -------------------------------
         if vis_every_n_batches is not None:
             if batch_num % vis_every_n_batches == 0:
-                vis_img = samples_batch['vis_img']
+                vis_img = samples_batch['vis_img'][0]
 
                 # estimated global IUV
                 ones_np = np.ones(vis_img.shape[:2]) * 255
