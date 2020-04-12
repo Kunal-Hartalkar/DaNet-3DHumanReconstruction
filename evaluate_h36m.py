@@ -92,7 +92,7 @@ def evaluate_single_in_multitasknet_h36m(model,
 
     # To rotate vertices such that they are right way up when projected
     axis1 = np.array([1, 0, 0])
-    angle1 = np.radians(180)
+    angle1 = -np.radians(180)
     axis2 = np.array([1, 0, 0])
     angle2 = np.radians(180)
     trans = np.array([0, 0, 0])
