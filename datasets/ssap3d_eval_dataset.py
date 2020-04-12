@@ -70,7 +70,7 @@ class SSAP3DEvalDataset(Dataset):
         vertices = torch.from_numpy(vertices).float()
         shape = torch.from_numpy(shape).float()
 
-        return {'input': input,
+        return {'input': img,
                 'vis_img': img,
                 'shape': shape,
                 'vertices': vertices,
