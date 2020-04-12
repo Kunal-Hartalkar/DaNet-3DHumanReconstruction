@@ -181,6 +181,11 @@ def evaluate_single_in_multitasknet_h36m(model,
         pred_vertices_projected2d = orthographic_project_torch(pred_vertices, pred_camera)
         pred_vertices_projected2d = undo_keypoint_normalisation(pred_vertices_projected2d,
                                                                 input.shape[-1])
+
+        smpl_pts = model.module.iuv2smpl.smpl(pred_betas, Rs=pred_rotmat, get_skin=True)
+        vert_pred = smpl_pts['verts']  # (1, 6890, 3)
+        vert_pred = vert_pred.cpu().detach().numpy()
+
         pred_reposed_smpl_output = smpl_model(betas=pred_betas)
         pred_reposed_vertices = pred_reposed_smpl_output.vertices
 
@@ -321,6 +326,7 @@ def evaluate_single_in_multitasknet_h36m(model,
                 plt.subplot(345)
                 plt.scatter(target_vertices[0, :, 0], target_vertices[0, :, 1], s=0.1, c='b')
                 plt.scatter(pred_vertices[0, :, 0], pred_vertices[0, :, 1], s=0.1, c='r')
+                plt.scatter(vert_pred[0, :, 0], vert_pred[0, :, 1], s=0.1, c='r')
                 plt.gca().invert_yaxis()
                 plt.gca().set_aspect('equal', adjustable='box')
 
