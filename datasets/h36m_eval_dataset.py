@@ -45,7 +45,7 @@ class H36MEvalDataset(Dataset):
         frame_path = os.path.join(self.cropped_frames_dir, fname)
 
         img = Image.open(frame_path).convert('RGB')  # (224, 224, 3) - but is PIL Image and not array
-        input = ToTensor()(img).unsqueeze(0)  # (1, 3, 224, 224)
+        input = ToTensor()(img) # (3, 224, 224)
         vis_img = np.array(img).astype(np.uint8)
 
         # Targets
