@@ -59,18 +59,18 @@ class SSAP3DEvalDataset(Dataset):
         bottom_right[bottom_right < 0] = 0
         img = img[top_left[0]: bottom_right[0], top_left[1]: bottom_right[1]]
         img = cv2.resize(img, (self.img_wh, self.img_wh), interpolation=cv2.INTER_LINEAR)
-        img = np.transpose(img, [2, 0, 1])/255.0
+        input = np.transpose(img, [2, 0, 1])/255.0
 
         # Targets
         vertices = self.vertices[index]
         shape = self.body_shapes[index]
         gender = self.genders[index]
 
-        img = torch.from_numpy(img).float()
+        input = torch.from_numpy(input).float()
         vertices = torch.from_numpy(vertices).float()
         shape = torch.from_numpy(shape).float()
 
-        return {'input': img,
+        return {'input': input,
                 'vis_img': img,
                 'shape': shape,
                 'vertices': vertices,
