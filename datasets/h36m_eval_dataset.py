@@ -48,7 +48,6 @@ class H36MEvalDataset(Dataset):
         img = img.resize((self.img_wh, self.img_wh))
         input = ToTensor()(img)  # (3, 224, 224)
         vis_img = np.array(img).astype(np.uint8)
-        print(input.shape, vis_img.shape)
 
         # Targets
         joints3d = self.joints3d[index]
