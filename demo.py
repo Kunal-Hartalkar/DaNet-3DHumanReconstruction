@@ -95,25 +95,23 @@ def main():
     img_path_list = [os.path.join(args.img_dir, name) for name in os.listdir(args.img_dir) if name.endswith('.jpg')]
     for i, path in enumerate(img_path_list):
 
-        image = Image.open(path).convert('RGB')
+        image = Image.open(path).convert('RGB')  # (224, 224, 3) - but is PIL Image and not array
         img_id = path.split('/')[-1][:-4]
-        print('image', np.array(image).shape)
 
-        image_tensor = torchvision.transforms.ToTensor()(image).unsqueeze(0).cuda()
-        print('image tensor', image_tensor.shape)
+        image_tensor = torchvision.transforms.ToTensor()(image).unsqueeze(0).cuda()  # (1, 3, 224, 224) - ToTensor automatically does transposing
+
         # run inference
-        pred_results = model.module.infer_net(image_tensor)
-        print('pred results', list(pred_results.keys()))
+        pred_results = model.module.infer_net(image_tensor)  # dict with keys 'visualisation' and 'para'
         para_pred = pred_results['para']
 
         cam_pred = para_pred[:, 0:3].contiguous()
         beta_pred = para_pred[:, 3:13].contiguous()
         Rs_pred = para_pred[:, 13:].contiguous().view(-1, 24, 3, 3)
+        print('cam', cam_pred)
 
         smpl_pts = model.module.iuv2smpl.smpl(beta_pred, Rs=Rs_pred, get_skin=True)
         kps3ds_pred = smpl_pts['cocoplus']
-        vert_pred = smpl_pts['verts']
-        print('verts', vert_pred.shape)
+        vert_pred = smpl_pts['verts']  # (1, 6890, 3)
 
         # input image
         image_np = image_tensor[0].cpu().numpy()
