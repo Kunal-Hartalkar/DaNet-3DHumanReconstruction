@@ -91,8 +91,8 @@ def evaluate_single_in_multitasknet_h36m(model,
     J_regressor_batch = J_regressor[None, :].expand(batch_size, -1, -1).to(device)
 
     # To rotate vertices such that they are right way up when projected
-    axis = np.array([0, 1, 0])
-    angle = np.radians(90)
+    axis = np.array([1, 0, 0])
+    angle = np.radians(180)
     trans = np.array([0, 0, 0])
 
     if 'pve' in metrics:
@@ -309,7 +309,7 @@ def evaluate_single_in_multitasknet_h36m(model,
                 plt.imshow(vis_img)
 
                 plt.subplot(342)
-                plt.imshow(global_iuv_rgba/255.0)
+                plt.imshow(global_iuv_rgba)
 
                 plt.subplot(343)
                 plt.imshow(vis_img)
