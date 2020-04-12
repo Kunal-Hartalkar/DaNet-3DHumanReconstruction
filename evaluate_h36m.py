@@ -313,7 +313,6 @@ def evaluate_single_in_multitasknet_h36m(model,
                 plt.subplot(345)
                 plt.scatter(target_vertices[0, :, 0], target_vertices[0, :, 1], s=0.1, c='b')
                 plt.scatter(pred_vertices[0, :, 0], pred_vertices[0, :, 1], s=0.1, c='r')
-                plt.scatter(vert_pred[0, :, 0], vert_pred[0, :, 1], s=0.1, c='r')
                 plt.gca().invert_yaxis()
                 plt.gca().set_aspect('equal', adjustable='box')
 
