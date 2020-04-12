@@ -97,7 +97,7 @@ def main():
 
         image = Image.open(path).convert('RGB')
         img_id = path.split('/')[-1][:-4]
-        print('image', image.shape)
+        print('image', image.size)
 
         image_tensor = torchvision.transforms.ToTensor()(image).unsqueeze(0).cuda()
         print('image tensor', image_tensor.shape)
