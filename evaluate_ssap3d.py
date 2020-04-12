@@ -156,7 +156,6 @@ def evaluate_single_in_multitasknet_ssap3d(model,
         # Numpy-fying
         target_vertices = target_vertices.cpu().detach().numpy()
         target_reposed_vertices = target_reposed_vertices.cpu().detach().numpy()
-        target_joints_h36mlsp = target_joints_h36mlsp.cpu().detach().numpy()
 
         pred_vertices = pred_vertices.cpu().detach().numpy()
         pred_vertices_projected2d = pred_vertices_projected2d.cpu().detach().numpy()
