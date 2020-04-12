@@ -93,8 +93,8 @@ def evaluate_single_in_multitasknet_h36m(model,
     # To rotate vertices such that they are right way up when projected
     axis1 = np.array([1, 0, 0])
     angle1 = -np.radians(180)
-    axis2 = np.array([1, 0, 0])
-    angle2 = np.radians(180)
+    axis2 = np.array([0, 1, 0])
+    angle2 = np.radians(90)
     trans = np.array([0, 0, 0])
 
     if 'pve' in metrics:
@@ -176,7 +176,8 @@ def evaluate_single_in_multitasknet_h36m(model,
                                  global_orient=pred_rotmat[:, 0].unsqueeze(1), pose2rot=False)
         pred_vertices = pred_output.vertices
         # Need to rotate pred_vertices to make them right way up when projected
-        # pred_vertices = rotate_translate_verts_torch(pred_vertices, axis1, angle1, trans)
+        pred_vertices = rotate_translate_verts_torch(pred_vertices, axis1, angle1, trans)
+        pred_vertices = rotate_translate_verts_torch(pred_vertices, axis2, angle2, trans)
         pred_vertices_projected2d = orthographic_project_torch(pred_vertices, pred_camera)
         pred_vertices_projected2d = undo_keypoint_normalisation(pred_vertices_projected2d,
                                                                 input.shape[-1])
