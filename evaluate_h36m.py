@@ -90,13 +90,6 @@ def evaluate_single_in_multitasknet_h36m(model,
     J_regressor = torch.from_numpy(np.load(JOINT_REGRESSOR_H36M)).float()
     J_regressor_batch = J_regressor[None, :].expand(batch_size, -1, -1).to(device)
 
-    # To rotate vertices such that they are right way up when projected
-    axis1 = np.array([1, 0, 0])
-    angle1 = np.radians(180)
-    axis2 = np.array([0, 1, 0])
-    angle2 = np.radians(180)
-    trans = np.array([0, 0, 0])
-
     if 'pve' in metrics:
         pve_sum = 0.0
         pve_per_frame = []
@@ -172,19 +165,13 @@ def evaluate_single_in_multitasknet_h36m(model,
         pred_camera = para_pred[:, 0:3].contiguous()
         pred_betas = para_pred[:, 3:13].contiguous()
         pred_rotmat = para_pred[:, 13:].contiguous().view(-1, 24, 3, 3)
-        pred_output = smpl_model(betas=pred_betas, body_pose=pred_rotmat[:, 1:],
-                                 global_orient=pred_rotmat[:, 0].unsqueeze(1), pose2rot=False)
-        pred_vertices = pred_output.vertices
-        # Need to rotate pred_vertices to make them right way up when projected
-        pred_vertices = rotate_translate_verts_torch(pred_vertices, axis1, angle1, trans)
-        pred_vertices = rotate_translate_verts_torch(pred_vertices, axis2, angle2, trans)
+        # For some reason using the official SMPL implementation gives upside down results
+        # Use this instead...
+        smpl_pts = model.iuv2smpl.smpl(pred_betas, Rs=pred_rotmat, get_skin=True)
+        pred_vertices = smpl_pts['verts']  # (1, 6890, 3)
         pred_vertices_projected2d = orthographic_project_torch(pred_vertices, pred_camera)
         pred_vertices_projected2d = undo_keypoint_normalisation(pred_vertices_projected2d,
                                                                 input.shape[-1])
-
-        smpl_pts = model.iuv2smpl.smpl(pred_betas, Rs=pred_rotmat, get_skin=True)
-        vert_pred = smpl_pts['verts']  # (1, 6890, 3)
-        vert_pred = vert_pred.cpu().detach().numpy()
 
         pred_reposed_smpl_output = smpl_model(betas=pred_betas)
         pred_reposed_vertices = pred_reposed_smpl_output.vertices
