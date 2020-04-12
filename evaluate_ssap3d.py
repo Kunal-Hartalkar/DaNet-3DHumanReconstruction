@@ -62,6 +62,7 @@ def parse_args():
 
     parser.add_argument('--gpu', type=str)
     parser.add_argument('--img_wh', default=224, type=int)
+    parser.add_argument('--path_correction', action='store_true')
 
     return parser.parse_args()
 
@@ -336,7 +337,8 @@ def main():
     model.eval()
 
     dataset_path = '/scratches/nazgul_2/as2562/datasets/sports_videos_smpl/final_dataset'
-    dataset = SSAP3DEvalDataset(dataset_path, img_wh=args.img_wh)
+    dataset = SSAP3DEvalDataset(dataset_path, img_wh=args.img_wh,
+                                path_correction=args.path_correction)
     print("Eval examples found:", len(dataset))
 
     # Metrics

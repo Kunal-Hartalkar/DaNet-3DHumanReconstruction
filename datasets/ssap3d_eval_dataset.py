@@ -16,7 +16,8 @@ def convert_bbox_centre_hw_to_corners(centre, height, width):
 
 
 class SSAP3DEvalDataset(Dataset):
-    def __init__(self, dataset_path, img_wh, bbox_scale_factor=1.2):
+    def __init__(self, dataset_path, img_wh, bbox_scale_factor=1.2,
+                 path_correction=False):
         super(SSAP3DEvalDataset, self).__init__()
 
         # Data
@@ -34,6 +35,8 @@ class SSAP3DEvalDataset(Dataset):
         self.img_wh = img_wh
         self.bbox_scale_factor = bbox_scale_factor
 
+        self.path_correction = path_correction
+
     def __len__(self):
         return len(self.frame_paths)
 
@@ -44,6 +47,8 @@ class SSAP3DEvalDataset(Dataset):
         # Input image - need to crop and resize because annoyingly, for sports videos dataset,
         # the frames in the cropped_frames dir are not actually tightly cropped frames.
         frame_path = self.frame_paths[index]
+        if self.path_correction:
+            frame_path = frame_path.replace('/scratch2/', '/scratch/')
         img = cv2.cvtColor(cv2.imread(frame_path), cv2.COLOR_BGR2RGB)
         bbox_centre = self.bbox_centres[index]
         bbox_wh = self.bbox_whs[index] * self.bbox_scale_factor
