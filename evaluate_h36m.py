@@ -50,12 +50,15 @@ def parse_args():
     """Parse input arguments"""
     parser = argparse.ArgumentParser(description='DaNet for 3D Human Shape and Pose')
     parser.add_argument(
-        '--cfg', dest='cfg_file', default='configs/smpl/smpl_encoder.yaml',
+        '--cfg',
+        dest='cfg_file',
+        default='configs/danet_demo.yaml',
         help='config file for training / testing')
     parser.add_argument(
-        '--load_ckpt', help='checkpoint path to load')
-    parser.add_argument(
-        '--img_dir', default='./imgs', type=str, help='path to test images')
+        '--load_ckpt',
+        help='checkpoint path to load',
+        default='./data/pretrained_model/danet_model_h36m_cocodp.pth')
+
     parser.add_argument('--protocol', default=2, type=int)
     parser.add_argument('--gpu', type=str)
     parser.add_argument('--img_wh', default=256, type=int)
