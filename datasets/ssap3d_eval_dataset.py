@@ -5,13 +5,19 @@ import torch
 from torch.utils.data import Dataset
 from torchvision.transforms import Normalize
 
-from utils.imutils import convert_bbox_centre_hw_to_corners
-import constants
+
+def convert_bbox_centre_hw_to_corners(centre, height, width):
+    x1 = centre[0] - height/2.0
+    x2 = centre[0] + height/2.0
+    y1 = centre[1] - width/2.0
+    y2 = centre[1] + width/2.0
+
+    return np.array([x1, y1, x2, y2])
 
 
-class SportsVideosEvalDataset(Dataset):
+class SSAP3DEvalDataset(Dataset):
     def __init__(self, dataset_path, img_wh, bbox_scale_factor=1.2):
-        super(SportsVideosEvalDataset, self).__init__()
+        super(SSAP3DEvalDataset, self).__init__()
 
         # Data
         data = np.load(os.path.join(dataset_path, 'sports_videos_eval.npz'))
@@ -27,7 +33,6 @@ class SportsVideosEvalDataset(Dataset):
 
         self.img_wh = img_wh
         self.bbox_scale_factor = bbox_scale_factor
-        self.normalize_img = Normalize(mean=constants.IMG_NORM_MEAN, std=constants.IMG_NORM_STD)
 
     def __len__(self):
         return len(self.frame_paths)
@@ -59,9 +64,6 @@ class SportsVideosEvalDataset(Dataset):
         img = torch.from_numpy(img).float()
         vertices = torch.from_numpy(vertices).float()
         shape = torch.from_numpy(shape).float()
-
-        # Process image
-        input = self.normalize_img(img)
 
         return {'input': input,
                 'vis_img': img,
