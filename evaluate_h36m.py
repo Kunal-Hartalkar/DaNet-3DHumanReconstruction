@@ -309,7 +309,7 @@ def evaluate_single_in_multitasknet_h36m(model,
                 plt.imshow(vis_img)
 
                 plt.subplot(342)
-                plt.imshow(global_iuv_rgba)
+                plt.imshow(global_iuv_rgba/255.0)
 
                 plt.subplot(343)
                 plt.imshow(vis_img)
