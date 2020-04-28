@@ -42,6 +42,10 @@ class MoViShapeEvalDataset(Dataset):
         # Targets
         shape = self.shape[index]
         gender = self.genders[index]
+        if gender == 'male':
+            gender = 'm'
+        elif gender == 'female':
+            gender = 'f'
 
         shape = torch.from_numpy(shape).float()
 
