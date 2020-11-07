@@ -55,3 +55,6 @@ Temporary Items
 
 # Pycharm
 .idea/
+
+# Eval
+evaluations/*
